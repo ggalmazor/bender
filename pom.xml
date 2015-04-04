@@ -6,71 +6,98 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.buntplanet</groupId>
-  <artifactId>spikejetty</artifactId>
-  <version>0.0.1</version>
+  <artifactId>bender</artifactId>
+  <version>0.0.2</version>
+  <packaging>jar</packaging>
+
+  <properties>
+    <java.version>1.8</java.version>
+    <jetty.version>9.2.10.v20150310</jetty.version>
+    <commons-io.version>2.4</commons-io.version>
+    <jackson.version>2.5.1</jackson.version>
+    <urin.version>2.19</urin.version>
+    <javaslang.version>1.1.0</javaslang.version>
+    <junit.version>4.12</junit.version>
+    <logback.version>1.1.2</logback.version>
+    <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
+    <maven-assembly-plugin.version>2.5.3</maven-assembly-plugin.version>
+  </properties>
 
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>${maven-compiler-plugin.version}</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
           <encoding>UTF-8</encoding>
           <compilerArguments>
             <Xlint:unchecked/>
+            <Xlint:deprecation/>
             <Werror/>
           </compilerArguments>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>${maven-assembly-plugin.version}</version>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
+
   <dependencies>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
-      <version>9.2.10.v20150310</version>
+      <version>${jetty.version}</version>
     </dependency>
-
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>2.4</version>
+      <version>${commons-io.version}</version>
     </dependency>
-
     <dependency>
-      <groupId>org.codehaus.jackson</groupId>
-      <artifactId>jackson-mapper-asl</artifactId>
-      <version>1.9.13</version>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
     </dependency>
-
     <dependency>
       <groupId>net.sourceforge.urin</groupId>
       <artifactId>urin</artifactId>
-      <version>2.19</version>
+      <version>${urin.version}</version>
     </dependency>
-
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.1.2</version>
+      <version>${logback.version}</version>
     </dependency>
-
     <dependency>
       <groupId>com.javaslang</groupId>
       <artifactId>javaslang</artifactId>
-      <version>1.1.0</version>
+      <version>${javaslang.version}</version>
     </dependency>
-
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-
 </project>

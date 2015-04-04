@@ -6,21 +6,20 @@ import org.apache.commons.io.IOUtils;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.Charset;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
 public final class Request {
   private final HttpServletRequest rawRequest;
   private final Map<String, String> params;
+  private final Map<String, String> headers;
   private Map<String, Object> payload = null;
 
-  private Request(final HttpServletRequest rawRequest, final Map<String, String> params) {
+  Request(final HttpServletRequest rawRequest, final Map<String, String> params, final Map<String, String> headers) {
     this.rawRequest = rawRequest;
     this.params = params;
-  }
-
-  static Request of(final HttpServletRequest rawRequest, final Map<String, String> params) {
-    return new Request(rawRequest, params);
+    this.headers = headers;
   }
 
   public Map<String, Object> payload() {
@@ -38,5 +37,19 @@ public final class Request {
 
   public Map<String, String> params() {
     return params;
+  }
+
+  public Map<String, String> headers() {
+    return headers;
+  }
+
+  public static Request of(HttpServletRequest rawRequest, Map<String, String> params) {
+    Map<String, String> headers = new HashMap<>();
+    Enumeration<String> headerNames = rawRequest.getHeaderNames();
+    while (headerNames.hasMoreElements()) {
+      String name = headerNames.nextElement();
+      headers.put(name, rawRequest.getHeader(name));
+    }
+    return new Request(rawRequest, params, headers);
   }
 }

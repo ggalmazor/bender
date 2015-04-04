@@ -17,6 +17,7 @@ import static java.util.stream.Collectors.toMap;
 abstract class RouteMatch {
   private final Route route;
   protected final Map<String, String> params = new HashMap<>();
+  protected final Map<String, String> headers = new HashMap<>();
 
   protected RouteMatch(Route route) {
     this.route = route;
