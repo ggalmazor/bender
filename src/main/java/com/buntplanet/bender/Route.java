@@ -2,30 +2,31 @@ package com.buntplanet.bender;
 
 import javaslang.monad.Try;
 
+import java.net.URI;
 import java.util.Objects;
 import java.util.function.Function;
 
 final class Route {
   private final HttpMethod httpMethod;
-  private final String path;
+  private final URI path;
   private final WebPath webPath;
   private final Function<Request, Response> target;
 
-  private Route(HttpMethod httpMethod, String path, WebPath webPath, Function<Request, Response> target) {
+  private Route(HttpMethod httpMethod, URI path, WebPath webPath, Function<Request, Response> target) {
     this.httpMethod = httpMethod;
     this.path = path;
     this.webPath = webPath;
     this.target = target;
   }
 
-  static Route of(HttpMethod httpMethod, String path, Function<Request, Response> target) {
+  static Route of(HttpMethod httpMethod, URI path, Function<Request, Response> target) {
     return Try.of(() -> WebPath.of(path))
         .map(webPath -> new Route(httpMethod, path, webPath, target))
         .orElseThrow(t -> new RuntimeException("Error parsing path", t));
   }
 
 
-  RouteMatch match(HttpMethod httpMethod, String path) {
+  RouteMatch match(HttpMethod httpMethod, URI path) {
     if (this.httpMethod.equals(httpMethod) && webPath.matches(path))
       return RouteMatch.Matching.of(this, path, webPath.capture(path));
     return RouteMatch.NonMatching.of(this);

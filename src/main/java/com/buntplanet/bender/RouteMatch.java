@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -40,13 +41,13 @@ abstract class RouteMatch {
       super(route);
     }
 
-    static Matching of(Route route, String inputPath, Map<String, String> pathParams) {
+    static Matching of(Route route, URI inputPath, Map<String, String> pathParams) {
       Matching matchingRoute = new Matching(route);
       StreamHelper.mergeInto(matchingRoute.params, pathParams, parseQueryParams(inputPath));
       return matchingRoute;
     }
 
-    static Map<String, String> parseQueryParams(String uri) {
+    static Map<String, String> parseQueryParams(URI uri) {
       try {
         return StreamSupport.stream(Http.parseHttpUrinReference(uri).query().spliterator(), false)
             .collect(toMap(HttpQuery.QueryParameter::name, HttpQuery.QueryParameter::value, (v1, v2) -> v2));

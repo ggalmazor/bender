@@ -8,6 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -25,11 +26,21 @@ public final class Bender implements Runnable {
   }
 
   public Bender post(final String path, final Function<Request, Response> handler) {
+    URI uri = Try.of(() -> new URI(path)).orElseThrow(t -> new RuntimeException("Wrong URI syntax", t));
+    return post(uri, handler);
+  }
+
+  public Bender post(final URI path, final Function<Request, Response> handler) {
     routes.add(HttpMethod.POST, path, handler);
     return this;
   }
 
   public Bender get(final String path, final Function<Request, Response> handler) {
+    URI uri = Try.of(() -> new URI(path)).orElseThrow(t -> new RuntimeException("Wrong URI syntax", t));
+    return get(uri, handler);
+  }
+
+  public Bender get(final URI path, final Function<Request, Response> handler) {
     routes.add(HttpMethod.GET, path, handler);
     return this;
   }
@@ -41,11 +52,11 @@ public final class Bender implements Runnable {
     server.setHandler(new AbstractHandler() {
       @Override
       public void handle(String path, org.eclipse.jetty.server.Request jettyRequest, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException {
-        String pathWithQueryString = Optional.ofNullable(jettyRequest.getQueryString())
-            .map(qs -> path + "?" + qs).orElse(path);
+        URI uri = Try.of(() -> new URI(Optional.ofNullable(jettyRequest.getQueryString())
+            .map(qs -> path + "?" + qs).orElse(path))).get();
         HttpMethod httpMethod = HttpMethod.iValueOf(jettyRequest.getMethod());
 
-        routes.findOneMatching(httpMethod, pathWithQueryString)
+        routes.findOneMatching(httpMethod, uri)
             .map(RouteMatch.executeWith(httpServletRequest))
             .orElse(new Response().notFound())
             .accept(httpServletResponse);

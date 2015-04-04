@@ -1,6 +1,7 @@
 package com.buntplanet.bender;
 
 
+import java.net.URI;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -17,7 +18,7 @@ final class Routes {
     return new Routes(new HashSet<>());
   }
 
-  void add(HttpMethod method, String path, Function<Request, Response> target) {
+  void add(HttpMethod method, URI path, Function<Request, Response> target) {
     add(Route.of(method, path, target));
   }
 
@@ -27,14 +28,14 @@ final class Routes {
     entries.add(entry);
   }
 
-  Optional<RouteMatch> findOneMatching(HttpMethod httpMethod, String path) {
+  Optional<RouteMatch> findOneMatching(HttpMethod httpMethod, URI path) {
     return entries.stream()
         .map(matches(httpMethod, path))
         .filter(RouteMatch::matches)
         .findFirst();
   }
 
-  private Function<Route, RouteMatch> matches(HttpMethod httpMethod, String path) {
+  private Function<Route, RouteMatch> matches(HttpMethod httpMethod, URI path) {
     return route -> route.match(httpMethod, path);
   }
 }

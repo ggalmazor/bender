@@ -7,6 +7,7 @@ import net.sourceforge.urin.scheme.http.Http;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
@@ -22,7 +23,7 @@ final class WebPath {
   private static final Logger logger = LoggerFactory.getLogger(WebPath.class);
   private final List<WebPathSegment> parts = new ArrayList<>();
 
-  static WebPath of(String uri) throws ParseException {
+  static WebPath of(URI uri) throws ParseException {
     return Http.parseHttpUrinReference(uri).path().segments().stream()
         .map(Segment::value)
         .map(WebPathSegment::of)
@@ -43,7 +44,7 @@ final class WebPath {
     return this;
   }
 
-  boolean matches(String path) {
+  boolean matches(URI path) {
     return Try.of(() -> matches(WebPath.of(path)))
         .orElseGet(t -> {
           logger.warn("Error parsing incoming path while trying to know if it matches a route", t);
@@ -58,7 +59,7 @@ final class WebPath {
         .allMatch(WebPathSegmentMatcher::isMatching);
   }
 
-  Map<String, String> capture(String path) {
+  Map<String, String> capture(URI path) {
     try {
       return capture(WebPath.of(path));
     } catch (ParseException e) {
