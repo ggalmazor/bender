@@ -6,7 +6,7 @@ Bender uses Java 8's new Functional and Stream APIs and Optional monad. It also 
 
 Route handlers in Bender are supposed to always return a [Response](https://github.com/ggalmazor/bender/blob/master/src/main/java/com/buntplanet/bender/Response.java) object. [Response](https://github.com/ggalmazor/bender/blob/master/src/main/java/com/buntplanet/bender/Response.java) instances can be retrieved from the input [Request](https://github.com/ggalmazor/bender/blob/master/src/main/java/com/buntplanet/bender/Request.java) object.
 
-As all handlers are Function<[Request](https://github.com/ggalmazor/bender/blob/master/src/main/java/com/buntplanet/bender/Request.java),[Response](https://github.com/ggalmazor/bender/blob/master/src/main/java/com/buntplanet/bender/Response.java)> instances, filter chains should be implemented by the user with function decorators that could stop the chain by returning a [Response](https://github.com/ggalmazor/bender/blob/master/src/main/java/com/buntplanet/bender/Response.java) object or by returning the [Response](https://github.com/ggalmazor/bender/blob/master/src/main/java/com/buntplanet/bender/Response.java) object of the decorated Function.
+As all handlers are Function<[Request](https://github.com/ggalmazor/bender/blob/master/src/main/java/com/buntplanet/bender/Request.java),[Response](https://github.com/ggalmazor/bender/blob/master/src/main/java/com/buntplanet/bender/Response.java)> instances, filter chains should be implemented by the user with function decorators that could stop the chain by not calling the decorated handler Function.
 
 It is intended that as much of the state as posible to be immutable.
 
@@ -29,3 +29,7 @@ Input parameters travelling in the path or the query string will be merged into 
  - Should we look into Request's headers in order to produce a coherent Response?
  - Is Route Matching too slow?
  - What happens with OPTIONS requests?
+ - Check & fix immutability on all artifacts
+ - Check & fix class and method visibility
+ - Write some advanced tests
+ - Think of someone using this library ad trying to write "unit" tests. Could that be achieved or they'd always be integration tests? A.K.A. is Jetty needed for testing Bender?
