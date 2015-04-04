@@ -18,6 +18,10 @@ public final class Response implements Consumer<HttpServletResponse> {
 
   }
 
+  public Map<String, String> headers() {
+    return headers;
+  }
+
   public Response content(Object content) {
     this.content = Optional.ofNullable(JsonHelper.serialize(content));
     return this;
@@ -33,8 +37,23 @@ public final class Response implements Consumer<HttpServletResponse> {
     return this;
   }
 
+  public Response unauthorized() {
+    this.status = Status.UNAUTHORIZED;
+    return this;
+  }
+
   public Response notFound() {
     this.status = Status.NOT_FOUND;
+    return this;
+  }
+
+  public Response badRequest() {
+    this.status = Status.BAD_REQUEST;
+    return this;
+  }
+
+  public Response internalServerError() {
+    this.status = Status.INTERNAL_SERVER_ERROR;
     return this;
   }
 
@@ -54,7 +73,8 @@ public final class Response implements Consumer<HttpServletResponse> {
   private enum Status {
     PENDING(0),
     OK(200), NO_CONTENT(204),
-    NOT_FOUND(404);
+    UNAUTHORIZED(401), NOT_FOUND(404), BAD_REQUEST(409),
+    INTERNAL_SERVER_ERROR(500);
 
     public final int code;
 
