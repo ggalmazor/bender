@@ -14,7 +14,7 @@ import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toMap;
 
-public abstract class RouteMatch {
+abstract class RouteMatch {
   private final Route route;
   protected final Map<String, String> params = new HashMap<>();
 
@@ -22,17 +22,17 @@ public abstract class RouteMatch {
     this.route = route;
   }
 
-  public abstract boolean matches();
+  protected abstract boolean matches();
 
-  public Response execute(HttpServletRequest httpServletRequest) {
-    return route.getTarget().apply(Request.from(httpServletRequest, params));
+  private Response execute(HttpServletRequest httpServletRequest) {
+    return route.getTarget().apply(Request.of(httpServletRequest, params));
   }
 
-  public static Function<RouteMatch, Response> executeWith(HttpServletRequest httpServletRequest) {
+  static Function<RouteMatch, Response> executeWith(HttpServletRequest httpServletRequest) {
     return routeMatch -> routeMatch.execute(httpServletRequest);
   }
 
-  public static class Matching extends RouteMatch {
+  final static class Matching extends RouteMatch {
     private static final Logger logger = LoggerFactory.getLogger(Matching.class);
 
     protected Matching(Route route) {
@@ -59,12 +59,12 @@ public abstract class RouteMatch {
     }
 
     @Override
-    public boolean matches() {
+    protected boolean matches() {
       return true;
     }
   }
 
-  public static class NonMatching extends RouteMatch {
+  final static class NonMatching extends RouteMatch {
     protected NonMatching(Route route) {
       super(route);
     }
@@ -74,7 +74,7 @@ public abstract class RouteMatch {
     }
 
     @Override
-    public boolean matches() {
+    protected boolean matches() {
       return false;
     }
   }

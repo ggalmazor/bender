@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class Response implements Consumer<HttpServletResponse> {
+public final class Response implements Consumer<HttpServletResponse> {
   private final Map<String, String> headers = new HashMap<>();
   private Optional<String> content = Optional.empty();
   private Status status = Status.PENDING;

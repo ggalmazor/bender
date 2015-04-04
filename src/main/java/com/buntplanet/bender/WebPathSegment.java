@@ -1,50 +1,51 @@
 package com.buntplanet.bender;
 
-public class WebPathSegment {
+class WebPathSegment {
   private final String name;
 
-  public WebPathSegment(String name) {
+  WebPathSegment(String name) {
     this.name = name;
   }
 
-  public static WebPathSegment of(String value) {
+  static WebPathSegment of(String value) {
     if (value.startsWith(":"))
       return new CapturingWebPathSegment(value.substring(1));
     return new WebPathSegment(value);
   }
 
-  public boolean isCapturing() {
+  boolean isCapturing() {
     return false;
   }
 
-  public boolean matches(String value) {
+  boolean matches(String value) {
     return this.name.equals(value);
   }
 
-  public boolean matches(WebPathSegment other) {
+  boolean matches(WebPathSegment other) {
     return this.matches(other.name);
   }
 
-  public String getName() {
+  String getName() {
     return this.name;
   }
 
+  @Override
   public String toString() {
     return name;
   }
 
-  private static class CapturingWebPathSegment extends WebPathSegment {
-    public CapturingWebPathSegment(String value) {
+  private static final class CapturingWebPathSegment extends WebPathSegment {
+    CapturingWebPathSegment(String value) {
       super(value);
     }
 
     @Override
-    public boolean isCapturing() {
+    boolean isCapturing() {
       return true;
     }
 
     @Override
-    public boolean matches(String value) {
+    boolean matches(String value) {
       return true;
     }
 

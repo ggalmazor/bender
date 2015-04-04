@@ -5,12 +5,11 @@ import javaslang.monad.Try;
 import java.util.Objects;
 import java.util.function.Function;
 
-class Route {
+final class Route {
   private final HttpMethod httpMethod;
   private final String path;
   private final WebPath webPath;
   private final Function<Request, Response> target;
-
 
   private Route(HttpMethod httpMethod, String path, WebPath webPath, Function<Request, Response> target) {
     this.httpMethod = httpMethod;
@@ -32,7 +31,7 @@ class Route {
     return RouteMatch.NonMatching.of(this);
   }
 
-  public Function<Request, Response> getTarget() {
+  Function<Request, Response> getTarget() {
     return target;
   }
 

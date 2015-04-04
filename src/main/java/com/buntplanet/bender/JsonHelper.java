@@ -6,19 +6,19 @@ import org.codehaus.jackson.type.TypeReference;
 
 import java.util.Map;
 
-class JsonHelper {
+final class JsonHelper {
   private static final ObjectMapper mapper = new ObjectMapper();
 
-  public static Map<String, Object> deserialize(String json) {
+  static Map<String, Object> deserialize(final String json) {
     return Try.<Map<String, Object>>of(() -> mapper.readValue(json, new StringObjectMap()))
         .orElseThrow(t -> new RuntimeException("Error deserializing JSON string", t));
   }
 
-  public static String serialize(Object object) {
+  static String serialize(final Object object) {
     return Try.of(() -> mapper.writeValueAsString(object))
         .orElseThrow(t -> new RuntimeException("Error serializing object", t));
   }
 
-  private static class StringObjectMap extends TypeReference<Map<String, Object>> {
+  private static final class StringObjectMap extends TypeReference<Map<String, Object>> {
   }
 }

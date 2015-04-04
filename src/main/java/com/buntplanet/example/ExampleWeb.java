@@ -20,8 +20,8 @@ public class ExampleWeb {
       System.out.println("");
       System.out.println("");
       System.out.println("PARAMS:");
-      for (String key : request.params.keySet())
-        logger.info(key + ": " + request.params.get(key));
+      for (String key : request.params().keySet())
+        logger.info(key + ": " + request.params().get(key));
       System.out.println("");
       System.out.println("");
       System.out.println("");
@@ -36,8 +36,8 @@ public class ExampleWeb {
       System.out.println("");
       System.out.println("");
       System.out.println("PARAMS:");
-      for (String key : request.params.keySet())
-        logger.info(key + ": " + request.params.get(key));
+      for (String key : request.params().keySet())
+        logger.info(key + ": " + request.params().get(key));
       System.out.println("");
       System.out.println("");
       System.out.println("");

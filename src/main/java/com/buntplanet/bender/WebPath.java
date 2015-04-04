@@ -18,32 +18,32 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
 
-public class WebPath {
+final class WebPath {
   private static final Logger logger = LoggerFactory.getLogger(WebPath.class);
   private final List<WebPathSegment> parts = new ArrayList<>();
 
-  public static WebPath of(String uri) throws ParseException {
+  static WebPath of(String uri) throws ParseException {
     return Http.parseHttpUrinReference(uri).path().segments().stream()
         .map(Segment::value)
         .map(WebPathSegment::of)
         .collect(WebPath.collector());
   }
 
-  public static Collector<WebPathSegment, ?, WebPath> collector() {
+  static Collector<WebPathSegment, ?, WebPath> collector() {
     return Collectors.reducing(new WebPath(), (Function<WebPathSegment, WebPath>) (part) -> new WebPath().add(part), (BinaryOperator<WebPath>) WebPath::merge);
   }
 
-  public WebPath merge(WebPath p2) {
+  WebPath merge(WebPath p2) {
     this.parts.addAll(p2.parts);
     return this;
   }
 
-  public WebPath add(WebPathSegment part) {
+  WebPath add(WebPathSegment part) {
     this.parts.add(part);
     return this;
   }
 
-  public boolean matches(String path) {
+  boolean matches(String path) {
     return Try.of(() -> matches(WebPath.of(path)))
         .orElseGet(t -> {
           logger.warn("Error parsing incoming path while trying to know if it matches a route", t);
@@ -58,7 +58,7 @@ public class WebPath {
         .allMatch(WebPathSegmentMatcher::isMatching);
   }
 
-  public Map<String, String> capture(String path) {
+  Map<String, String> capture(String path) {
     try {
       return capture(WebPath.of(path));
     } catch (ParseException e) {
@@ -70,7 +70,7 @@ public class WebPath {
     }
   }
 
-  public Map<String, String> capture(WebPath other) {
+  Map<String, String> capture(WebPath other) {
     HashMap<String, String> params = new HashMap<>();
 
     if (!this.matches(other))
@@ -92,20 +92,20 @@ public class WebPath {
         .reduce(params, accumulator, merger);
   }
 
-  private class WebPathSegmentMatcher {
-    public final WebPathSegment matcher;
-    public final WebPathSegment candidate;
+  private final class WebPathSegmentMatcher {
+    private final WebPathSegment matcher;
+    private final WebPathSegment candidate;
 
-    public WebPathSegmentMatcher(WebPathSegment matcher, WebPathSegment candidate) {
+    private WebPathSegmentMatcher(WebPathSegment matcher, WebPathSegment candidate) {
       this.matcher = matcher;
       this.candidate = candidate;
     }
 
-    public boolean isMatching() {
+    private boolean isMatching() {
       return matcher.matches(candidate);
     }
 
-    public boolean isCapturing() {
+    private boolean isCapturing() {
       return matcher.isCapturing();
     }
   }

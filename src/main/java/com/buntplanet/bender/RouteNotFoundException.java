@@ -3,7 +3,7 @@ package com.buntplanet.bender;
 
 import java.util.function.Supplier;
 
-class RouteNotFoundException extends RuntimeException {
+final class RouteNotFoundException extends RuntimeException {
 
   RouteNotFoundException(HttpMethod httpMethod, String path) {
     super("Route " + httpMethod + " " + path + " not found");

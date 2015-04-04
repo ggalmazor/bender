@@ -6,10 +6,10 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
 
-public class StreamHelper {
+final class StreamHelper {
 
   @SafeVarargs
-  public static <T1, T2> void mergeInto(Map<T1, T2> output, Map<T1, T2>... maps) {
+  static <T1, T2> void mergeInto(Map<T1, T2> output, Map<T1, T2>... maps) {
     Stream.of(maps)
         .map(Map::entrySet)
         .flatMap(Collection::stream)

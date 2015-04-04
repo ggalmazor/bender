@@ -20,7 +20,6 @@ public final class Bender implements Runnable {
     this.routes = routes;
   }
 
-
   public static Bender at(int port) {
     return new Bender(port, Routes.empty());
   }
