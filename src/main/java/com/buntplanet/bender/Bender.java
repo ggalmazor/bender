@@ -52,8 +52,12 @@ public final class Bender implements Runnable {
     server.setHandler(new AbstractHandler() {
       @Override
       public void handle(String path, org.eclipse.jetty.server.Request jettyRequest, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException {
-        URI uri = Try.of(() -> new URI(Optional.ofNullable(jettyRequest.getQueryString())
-            .map(qs -> path + "?" + qs).orElse(path))).get();
+        String pathWithQueryString = Optional.ofNullable(jettyRequest.getQueryString())
+            .map(qs -> path + "?" + qs)
+            .orElse(path);
+
+        URI uri = Try.of(() -> new URI(pathWithQueryString)).get();
+
         HttpMethod httpMethod = HttpMethod.iValueOf(jettyRequest.getMethod());
 
         routes.findOneMatching(httpMethod, uri)

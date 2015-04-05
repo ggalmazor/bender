@@ -23,7 +23,13 @@ public final class Response implements Consumer<HttpServletResponse> {
   }
 
   public Response content(Object content) {
-    this.content = Optional.ofNullable(JsonHelper.serialize(content));
+    return maybeContent(Optional.ofNullable(content));
+  }
+
+  public Response maybeContent(Optional<Object> content) {
+    this.content = content.map(JsonHelper::serialize);
+    if (!this.content.isPresent())
+      this.noContent();
     return this;
   }
 
