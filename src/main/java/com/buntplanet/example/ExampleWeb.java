@@ -25,7 +25,7 @@ public class ExampleWeb {
       System.out.println("");
       System.out.println("");
       System.out.println("");
-      return request.buildResponse().ok().content("HU HA!");
+      return request.buildResponse().content("HU HA!");
     });
 
     bender.get("/cocotero/:chuchu/blabla", request -> {
@@ -41,7 +41,7 @@ public class ExampleWeb {
       System.out.println("");
       System.out.println("");
       System.out.println("");
-      return request.buildResponse().ok().content("HU HA!");
+      return request.buildResponse().content("HU HA!");
     });
 
     bender.run();

@@ -49,14 +49,10 @@ class BenderHandler extends AbstractHandler {
         .map(Route::getHttpMethod)
         .map(Enum::name)
         .collect(joining(","));
-    Response response = new Response();
-    if (!Strings.isNullOrEmpty(httpMethods)) {
-      response.headers().put("Access-Control-Allow-Origin", "*");
-      response.headers().put("Access-Control-Allow-Methods", httpMethods + ",OPTIONS");
-      response.headers().put("Access-Control-Allow-Headers", "Content-Type,Accept,Origin,X-Auth-Token");
-    } else
-      response.notFound();
-    return response;
+    if (!Strings.isNullOrEmpty(httpMethods))
+      return Response.cors(httpMethods);
+    else
+      return new Response().notFound();
   }
 
   private Response process(HttpServletRequest httpServletRequest) {

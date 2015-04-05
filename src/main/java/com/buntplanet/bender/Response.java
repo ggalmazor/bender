@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 public final class Response implements Consumer<HttpServletResponse> {
   private final Map<String, String> headers = new HashMap<>();
   private Optional<String> content = Optional.empty();
-  private Status status = Status.PENDING;
+  private Status status = Status.OK;
 
   Response() {
 
@@ -53,9 +53,19 @@ public final class Response implements Consumer<HttpServletResponse> {
     return this;
   }
 
+  public Response badRequest() {
+    this.status = Status.BAD_REQUEST;
+    return this;
+  }
+
   public Response badRequest(Throwable t) {
     this.status = Status.BAD_REQUEST;
     this.content(t);
+    return this;
+  }
+
+  public Response internalServerError() {
+    this.status = Status.INTERNAL_SERVER_ERROR;
     return this;
   }
 
@@ -67,8 +77,8 @@ public final class Response implements Consumer<HttpServletResponse> {
 
   @Override
   public void accept(HttpServletResponse raw) {
-    raw.addHeader("Content-Type", "application/json; charset=UTF-8");
     raw.setStatus(status.code);
+    headers.keySet().forEach(name -> raw.addHeader(name, headers.get(name)));
     content.ifPresent(c -> Try.<PrintWriter>of(raw::getWriter)
             .flatMap(writer -> {
               writer.write(c);
@@ -79,8 +89,15 @@ public final class Response implements Consumer<HttpServletResponse> {
     );
   }
 
+  public static Response cors(String httpMethods) {
+    Response response = new Response();
+    response.headers().put("Access-Control-Allow-Origin", "*");
+    response.headers().put("Access-Control-Allow-Methods", httpMethods + ",OPTIONS");
+    response.headers().put("Access-Control-Allow-Headers", "Content-Type,Accept,Origin,X-Auth-Token");
+    return response;
+  }
+
   private enum Status {
-    PENDING(0),
     OK(200), NO_CONTENT(204),
     BAD_REQUEST(400), UNAUTHORIZED(401), NOT_FOUND(404),
     INTERNAL_SERVER_ERROR(500);

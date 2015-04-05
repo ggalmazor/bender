@@ -32,7 +32,9 @@ public final class Request {
   }
 
   public Response buildResponse() {
-    return new Response();
+    Response response = Response.cors(rawRequest.getMethod());
+    response.headers().put("Content-Type", "application/json; charset=UTF-8");
+    return response;
   }
 
   public Map<String, String> params() {
