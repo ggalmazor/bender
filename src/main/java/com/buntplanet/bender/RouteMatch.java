@@ -18,13 +18,16 @@ import static java.util.stream.Collectors.toMap;
 abstract class RouteMatch {
   private final Route route;
   protected final Map<String, String> params = new HashMap<>();
-  protected final Map<String, String> headers = new HashMap<>();
 
   protected RouteMatch(Route route) {
     this.route = route;
   }
 
   protected abstract boolean matches();
+
+  public Route getRoute() {
+    return route;
+  }
 
   private Response execute(HttpServletRequest httpServletRequest) {
     return route.getTarget().apply(Request.of(httpServletRequest, params));
@@ -44,6 +47,12 @@ abstract class RouteMatch {
     static Matching of(Route route, URI inputPath, Map<String, String> pathParams) {
       Matching matchingRoute = new Matching(route);
       StreamHelper.mergeInto(matchingRoute.params, pathParams, parseQueryParams(inputPath));
+      return matchingRoute;
+    }
+
+    static Matching of(Route route, URI inputPath) {
+      Matching matchingRoute = new Matching(route);
+      StreamHelper.mergeInto(matchingRoute.params, new HashMap<>(), parseQueryParams(inputPath));
       return matchingRoute;
     }
 

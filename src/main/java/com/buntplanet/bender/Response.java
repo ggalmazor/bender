@@ -53,18 +53,21 @@ public final class Response implements Consumer<HttpServletResponse> {
     return this;
   }
 
-  public Response badRequest() {
+  public Response badRequest(Throwable t) {
     this.status = Status.BAD_REQUEST;
+    this.content(t);
     return this;
   }
 
-  public Response internalServerError() {
+  public Response internalServerError(Throwable t) {
     this.status = Status.INTERNAL_SERVER_ERROR;
+    this.content(t);
     return this;
   }
 
   @Override
   public void accept(HttpServletResponse raw) {
+    raw.addHeader("Content-Type", "application/json; charset=UTF-8");
     raw.setStatus(status.code);
     content.ifPresent(c -> Try.<PrintWriter>of(raw::getWriter)
             .flatMap(writer -> {
@@ -79,7 +82,7 @@ public final class Response implements Consumer<HttpServletResponse> {
   private enum Status {
     PENDING(0),
     OK(200), NO_CONTENT(204),
-    UNAUTHORIZED(401), NOT_FOUND(404), BAD_REQUEST(409),
+    BAD_REQUEST(400), UNAUTHORIZED(401), NOT_FOUND(404),
     INTERNAL_SERVER_ERROR(500);
 
     public final int code;
@@ -87,5 +90,6 @@ public final class Response implements Consumer<HttpServletResponse> {
     Status(int code) {
       this.code = code;
     }
+
   }
 }

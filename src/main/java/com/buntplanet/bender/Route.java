@@ -32,8 +32,18 @@ final class Route {
     return RouteMatch.NonMatching.of(this);
   }
 
+  RouteMatch match(URI path) {
+    if (webPath.matches(path))
+      return RouteMatch.Matching.of(this, path);
+    return RouteMatch.NonMatching.of(this);
+  }
+
   Function<Request, Response> getTarget() {
     return target;
+  }
+
+  public HttpMethod getHttpMethod() {
+    return httpMethod;
   }
 
   @Override

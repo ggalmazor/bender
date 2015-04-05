@@ -3,9 +3,12 @@ package com.buntplanet.bender;
 
 import java.net.URI;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+
+import static java.util.stream.Collectors.toList;
 
 final class Routes {
   private final Set<Route> entries;
@@ -35,7 +38,18 @@ final class Routes {
         .findFirst();
   }
 
+  List<RouteMatch> findMatching(URI path) {
+    return entries.stream()
+        .map(matches(path))
+        .filter(RouteMatch::matches)
+        .collect(toList());
+  }
+
   private Function<Route, RouteMatch> matches(HttpMethod httpMethod, URI path) {
     return route -> route.match(httpMethod, path);
+  }
+
+  private Function<Route, RouteMatch> matches(URI path) {
+    return route -> route.match(path);
   }
 }
