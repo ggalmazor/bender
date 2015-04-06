@@ -22,7 +22,7 @@ final class Route {
   static Route of(HttpMethod httpMethod, URI path, Function<Request, Response> target) {
     return Try.of(() -> WebPath.of(path))
         .map(webPath -> new Route(httpMethod, path, webPath, target))
-        .orElseThrow(t -> new RuntimeException("Error parsing path", t));
+        .get();
   }
 
 

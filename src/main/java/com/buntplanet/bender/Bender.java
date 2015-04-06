@@ -20,8 +20,8 @@ public final class Bender implements Runnable {
   }
 
   public Bender post(final String path, final Function<Request, Response> handler) {
-    URI uri = Try.of(() -> new URI(path)).orElseThrow(t -> new RuntimeException("Wrong URI syntax", t));
-    return post(uri, handler);
+    return Try.of(() -> new URI(path))
+        .map(uri -> post(uri, handler)).get();
   }
 
   public Bender post(final URI path, final Function<Request, Response> handler) {
@@ -30,8 +30,8 @@ public final class Bender implements Runnable {
   }
 
   public Bender get(final String path, final Function<Request, Response> handler) {
-    URI uri = Try.of(() -> new URI(path)).orElseThrow(t -> new RuntimeException("Wrong URI syntax", t));
-    return get(uri, handler);
+    return Try.of(() -> new URI(path))
+        .map(uri -> get(uri, handler)).get();
   }
 
 

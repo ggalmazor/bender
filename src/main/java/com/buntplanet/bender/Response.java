@@ -79,14 +79,12 @@ public final class Response implements Consumer<HttpServletResponse> {
   public void accept(HttpServletResponse raw) {
     raw.setStatus(status.code);
     headers.keySet().forEach(name -> raw.addHeader(name, headers.get(name)));
-    content.ifPresent(c -> Try.<PrintWriter>of(raw::getWriter)
-            .flatMap(writer -> {
-              writer.write(c);
-              writer.flush();
-              return Try.run(writer::close);
-            })
-            .orElseThrow(t -> new RuntimeException("Error writing content to HttpServletResponse", t))
-    );
+    content.ifPresent(c -> Try.run(() -> {
+      PrintWriter writer = raw.getWriter();
+      writer.write(c);
+      writer.flush();
+      writer.close();
+    }));
   }
 
   public static Response cors(String httpMethods) {

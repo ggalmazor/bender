@@ -1,6 +1,6 @@
 package com.buntplanet.bender;
 
-import net.sourceforge.urin.ParseException;
+import javaslang.monad.Try;
 import net.sourceforge.urin.scheme.http.Http;
 import net.sourceforge.urin.scheme.http.HttpQuery;
 import org.slf4j.Logger;
@@ -57,16 +57,11 @@ abstract class RouteMatch {
     }
 
     static Map<String, String> parseQueryParams(URI uri) {
-      try {
-        return StreamSupport.stream(Http.parseHttpUrinReference(uri).query().spliterator(), false)
-            .collect(toMap(HttpQuery.QueryParameter::name, HttpQuery.QueryParameter::value, (v1, v2) -> v2));
-      } catch (ParseException e) {
-        logger.error("Can't deserialize incoming path", e);
-        throw new RouteNotFoundException("Can't deserialize incoming path");
-      } catch (UnsupportedOperationException e) {
-        logger.debug("Uri doesn't have query params");
-        return new HashMap<>();
-      }
+      return Try.of(() -> Http.parseHttpUrinReference(uri).query().spliterator())
+          .map(spliterator -> StreamSupport.stream(spliterator, false))
+          .map(stream -> stream.collect(toMap(HttpQuery.QueryParameter::name, HttpQuery.QueryParameter::value, (v1, v2) -> v2)))
+          .toOption()
+          .orElse(new HashMap<>());
     }
 
     @Override

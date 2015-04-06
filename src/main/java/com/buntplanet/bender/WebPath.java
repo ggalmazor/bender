@@ -60,15 +60,7 @@ final class WebPath {
   }
 
   Map<String, String> capture(URI path) {
-    try {
-      return capture(WebPath.of(path));
-    } catch (ParseException e) {
-      logger.warn("Error parsing incoming path while trying to capture path parts", e);
-      throw new RuntimeException("Error parsing incoming path while trying to capture path parts", e);
-    } catch (UnsupportedOperationException e) {
-      logger.warn("Error parsing incoming path while trying to capture", e);
-      throw new RuntimeException("Error parsing incoming path while trying to capture path parts", e);
-    }
+    return Try.of(() -> capture(WebPath.of(path))).get();
   }
 
   Map<String, String> capture(WebPath other) {
