@@ -1,6 +1,7 @@
-package com.buntplanet.bender;
+package net.programania.bender;
 
 
+import net.programania.bender.*;
 import net.sourceforge.urin.ParseException;
 import org.junit.Before;
 import org.junit.Test;

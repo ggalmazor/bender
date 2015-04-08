@@ -1,8 +1,6 @@
-package com.buntplanet.bender;
+package net.programania.bender;
 
-import javaslang.Strings;
-import javaslang.match.Matchs;
-import javaslang.monad.Try;
+import javaslang.control.*;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +31,7 @@ class BenderHandler extends AbstractHandler {
         })
         .orElseGet(t -> {
           LOGGER.warn("Error processing request", t);
-          return Matchs
+          return Match
               .caze((IllegalArgumentException iae) -> new Response().badRequest(t))
               .orElse(new Response().internalServerError(t))
               .apply(t);
@@ -44,28 +42,26 @@ class BenderHandler extends AbstractHandler {
 
   private Response processOptions(HttpServletRequest httpServletRequest) {
     URI uri = Try.of(() -> new URI(httpServletRequest.getPathInfo())).get();
-    String httpMethods = routes.findMatching(uri).stream()
+    return Optional.of(routes.findMatching(uri).stream()
         .map(RouteMatch::getRoute)
         .map(Route::getHttpMethod)
         .map(Enum::name)
-        .collect(joining(","));
-    if (!Strings.isNullOrEmpty(httpMethods))
-      return Response.cors(httpMethods);
-    else
-      return new Response().notFound();
+        .collect(joining(",")))
+        .filter(String::isEmpty)
+        .map(Response::cors)
+        .orElse(new Response().notFound());
   }
 
   private Response process(HttpServletRequest httpServletRequest) {
     HttpMethod httpMethod = HttpMethod.iValueOf(httpServletRequest.getMethod());
-    String queryString = httpServletRequest.getQueryString();
     String path = httpServletRequest.getPathInfo();
-    String pathWithQueryString = Optional.ofNullable(queryString)
+    String pathWithQueryString = Optional.ofNullable(httpServletRequest.getQueryString())
         .map(qs -> path + "?" + qs)
         .orElse(path);
 
     URI uri = Try.of(() -> new URI(pathWithQueryString)).get();
 
-    return routes.findOneMatching(httpMethod, uri)
+    return routes.findFirstMatching(httpMethod, uri)
         .map(RouteMatch.executeWith(httpServletRequest))
         .orElse(new Response().notFound());
   }

@@ -1,6 +1,6 @@
-package com.buntplanet.bender;
+package net.programania.bender;
 
-import javaslang.monad.Try;
+import javaslang.control.Try;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
@@ -15,11 +15,12 @@ public final class Response implements Consumer<HttpServletResponse> {
   private Status status = Status.OK;
 
   Response() {
-
+    // Prevent Response creation from the outside of this package
   }
 
-  public Map<String, String> headers() {
-    return headers;
+  public Response header(String key, String value) {
+    headers.put(key, value);
+    return this;
   }
 
   public Response content(Object content) {
@@ -89,9 +90,9 @@ public final class Response implements Consumer<HttpServletResponse> {
 
   public static Response cors(String httpMethods) {
     Response response = new Response();
-    response.headers().put("Access-Control-Allow-Origin", "*");
-    response.headers().put("Access-Control-Allow-Methods", httpMethods + ",OPTIONS");
-    response.headers().put("Access-Control-Allow-Headers", "Content-Type,Accept,Origin,X-Auth-Token");
+    response.header("Access-Control-Allow-Origin", "*");
+    response.header("Access-Control-Allow-Methods", httpMethods + ",OPTIONS");
+    response.header("Access-Control-Allow-Headers", "Content-Type,Accept,Origin,X-Auth-Token");
     return response;
   }
 

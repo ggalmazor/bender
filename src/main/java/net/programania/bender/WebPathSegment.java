@@ -1,4 +1,4 @@
-package com.buntplanet.bender;
+package net.programania.bender;
 
 class WebPathSegment {
   private final String name;

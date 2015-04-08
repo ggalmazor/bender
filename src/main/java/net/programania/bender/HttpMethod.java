@@ -1,6 +1,7 @@
-package com.buntplanet.bender;
+package net.programania.bender;
 
-import javaslang.monad.Try;
+
+import javaslang.control.Try;
 
 enum HttpMethod {
   GET, POST, OPTIONS;

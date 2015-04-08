@@ -1,10 +1,8 @@
-package com.buntplanet.bender;
+package net.programania.bender;
 
-import javaslang.monad.Try;
+import javaslang.control.Try;
 import net.sourceforge.urin.scheme.http.Http;
 import net.sourceforge.urin.scheme.http.HttpQuery;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -38,8 +36,6 @@ abstract class RouteMatch {
   }
 
   final static class Matching extends RouteMatch {
-    private static final Logger logger = LoggerFactory.getLogger(Matching.class);
-
     protected Matching(Route route) {
       super(route);
     }

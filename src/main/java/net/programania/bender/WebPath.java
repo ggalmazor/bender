@@ -1,6 +1,6 @@
-package com.buntplanet.bender;
+package net.programania.bender;
 
-import javaslang.monad.Try;
+import javaslang.control.Try;
 import net.sourceforge.urin.ParseException;
 import net.sourceforge.urin.Segment;
 import net.sourceforge.urin.scheme.http.Http;

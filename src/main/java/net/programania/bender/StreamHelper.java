@@ -1,4 +1,4 @@
-package com.buntplanet.bender;
+package net.programania.bender;
 
 import java.util.Collection;
 import java.util.Map;

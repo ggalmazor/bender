@@ -1,6 +1,6 @@
-package com.buntplanet.bender;
+package net.programania.bender;
 
-import javaslang.monad.Try;
+import javaslang.control.Try;
 import org.eclipse.jetty.server.Server;
 
 import java.net.URI;
@@ -33,7 +33,6 @@ public final class Bender implements Runnable {
     return Try.of(() -> new URI(path))
         .map(uri -> get(uri, handler)).get();
   }
-
 
   public Bender get(final URI path, final Function<Request, Response> handler) {
     routes.add(HttpMethod.GET, path, handler);

@@ -1,6 +1,6 @@
-package com.buntplanet.bender;
+package net.programania.bender;
 
-import javaslang.monad.Try;
+import javaslang.control.Try;
 
 import java.net.URI;
 import java.util.Objects;

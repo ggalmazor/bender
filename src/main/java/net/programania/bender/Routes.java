@@ -1,4 +1,4 @@
-package com.buntplanet.bender;
+package net.programania.bender;
 
 
 import java.net.URI;
@@ -31,7 +31,7 @@ final class Routes {
     entries.add(entry);
   }
 
-  Optional<RouteMatch> findOneMatching(HttpMethod httpMethod, URI path) {
+  Optional<RouteMatch> findFirstMatching(HttpMethod httpMethod, URI path) {
     return entries.stream()
         .map(matches(httpMethod, path))
         .filter(RouteMatch::matches)
