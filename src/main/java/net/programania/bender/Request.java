@@ -43,6 +43,14 @@ public final class Request {
     return Optional.ofNullable(params.get(key));
   }
 
+  public Map<String, String> getParams() {
+    return params;
+  }
+
+  public Map<String, String> getHeaders() {
+    return headers;
+  }
+
   public Optional<String> header(String key) {
     return Optional.ofNullable(headers.get(key));
   }

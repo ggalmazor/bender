@@ -1,6 +1,7 @@
 package net.programania.bender;
 
-import javaslang.control.*;
+import javaslang.control.Match;
+import javaslang.control.Try;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +48,7 @@ class BenderHandler extends AbstractHandler {
         .map(Route::getHttpMethod)
         .map(Enum::name)
         .collect(joining(",")))
-        .filter(String::isEmpty)
+        .filter(s -> !s.isEmpty())
         .map(Response::cors)
         .orElse(new Response().notFound());
   }
