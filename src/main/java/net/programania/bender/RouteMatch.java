@@ -4,51 +4,47 @@ import javaslang.control.Try;
 import net.sourceforge.urin.scheme.http.Http;
 import net.sourceforge.urin.scheme.http.HttpQuery;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toMap;
 
-abstract class RouteMatch {
-  private final Route route;
+public abstract class RouteMatch<REQ, RES> {
+  private final Route<REQ, RES> route;
   protected final Map<String, String> params = new HashMap<>();
 
-  protected RouteMatch(Route route) {
+  protected RouteMatch(Route<REQ, RES> route) {
     this.route = route;
   }
 
   protected abstract boolean matches();
 
-  public Route getRoute() {
+  public Route<REQ, RES> getRoute() {
     return route;
   }
 
-  private Response execute(HttpServletRequest httpServletRequest) {
-    return route.getTarget().apply(Request.of(httpServletRequest, params));
+  public Map<String, String> getParams() {
+    return params;
   }
 
-  static Function<RouteMatch, Response> executeWith(HttpServletRequest httpServletRequest) {
-    return routeMatch -> routeMatch.execute(httpServletRequest);
-  }
+  public final static class Matching<M_REQ, M_RES> extends RouteMatch<M_REQ, M_RES> {
 
-  final static class Matching extends RouteMatch {
-    protected Matching(Route route) {
+    protected Matching(Route<M_REQ, M_RES> route) {
       super(route);
     }
 
-    static Matching of(Route route, URI inputPath, Map<String, String> pathParams) {
-      Matching matchingRoute = new Matching(route);
-      StreamHelper.mergeInto(matchingRoute.params, pathParams, parseQueryParams(inputPath));
+    static <M_I_REQ, M_I_RES> Matching of(Route<M_I_REQ, M_I_RES> route, URI inputPath, Map<String, String> pathParams) {
+      Matching<M_I_REQ, M_I_RES> matchingRoute = new Matching<>(route);
+      StreamHelper.mergeInto(matchingRoute.params, Stream.of(pathParams, parseQueryParams(inputPath)));
       return matchingRoute;
     }
 
-    static Matching of(Route route, URI inputPath) {
-      Matching matchingRoute = new Matching(route);
-      StreamHelper.mergeInto(matchingRoute.params, new HashMap<>(), parseQueryParams(inputPath));
+    static <M_I_REQ, M_I_RES> Matching of(Route<M_I_REQ, M_I_RES> route, URI inputPath) {
+      Matching<M_I_REQ, M_I_RES> matchingRoute = new Matching<>(route);
+      StreamHelper.mergeInto(matchingRoute.params, Stream.of(new HashMap<>(), parseQueryParams(inputPath)));
       return matchingRoute;
     }
 
@@ -66,13 +62,13 @@ abstract class RouteMatch {
     }
   }
 
-  final static class NonMatching extends RouteMatch {
-    protected NonMatching(Route route) {
+  public final static class NonMatching<NM_REQ, NM_RES> extends RouteMatch<NM_REQ, NM_RES> {
+    protected NonMatching(Route<NM_REQ, NM_RES> route) {
       super(route);
     }
 
-    static NonMatching of(Route route) {
-      return new NonMatching(route);
+    static <NM_I_REQ, NM_I_RES> NonMatching of(Route<NM_I_REQ, NM_I_RES> route) {
+      return new NonMatching<>(route);
     }
 
     @Override

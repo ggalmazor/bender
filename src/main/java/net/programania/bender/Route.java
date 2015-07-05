@@ -6,25 +6,24 @@ import java.net.URI;
 import java.util.Objects;
 import java.util.function.Function;
 
-final class Route {
+public final class Route<REQ, RES> {
   private final HttpMethod httpMethod;
   private final URI path;
   private final WebPath webPath;
-  private final Function<Request, Response> target;
+  private final Function<REQ, RES> target;
 
-  private Route(HttpMethod httpMethod, URI path, WebPath webPath, Function<Request, Response> target) {
+  private Route(HttpMethod httpMethod, URI path, WebPath webPath, Function<REQ, RES> target) {
     this.httpMethod = httpMethod;
     this.path = path;
     this.webPath = webPath;
     this.target = target;
   }
 
-  static Route of(HttpMethod httpMethod, URI path, Function<Request, Response> target) {
+  static <I_REQ, I_RES> Route<I_REQ, I_RES> of(HttpMethod httpMethod, URI path, Function<I_REQ, I_RES> target) {
     return Try.of(() -> WebPath.of(path))
-        .map(webPath -> new Route(httpMethod, path, webPath, target))
+        .map(webPath -> new Route<>(httpMethod, path, webPath, target))
         .get();
   }
-
 
   RouteMatch match(HttpMethod httpMethod, URI path) {
     if (this.httpMethod.equals(httpMethod) && webPath.matches(path))
@@ -38,7 +37,7 @@ final class Route {
     return RouteMatch.NonMatching.of(this);
   }
 
-  Function<Request, Response> getTarget() {
+  public Function<REQ, RES> getTarget() {
     return target;
   }
 

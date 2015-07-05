@@ -7,10 +7,10 @@ import java.net.URI;
 import java.util.function.Function;
 
 public final class Bender implements Runnable {
-  private final Routes routes;
+  private final Routes<Request, Response> routes;
   private final int port;
 
-  private Bender(int port, Routes routes) {
+  private Bender(int port, Routes<Request, Response> routes) {
     this.port = port;
     this.routes = routes;
   }

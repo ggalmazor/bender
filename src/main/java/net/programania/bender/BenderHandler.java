@@ -12,14 +12,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static java.util.stream.Collectors.joining;
 
 class BenderHandler extends AbstractHandler {
   private final static Logger LOGGER = LoggerFactory.getLogger(BenderHandler.class);
-  private final Routes routes;
+  private final Routes<Request, Response> routes;
 
-  public BenderHandler(Routes routes) {
+  BenderHandler(Routes<Request, Response> routes) {
     this.routes = routes;
   }
 
@@ -43,14 +44,14 @@ class BenderHandler extends AbstractHandler {
 
   private Response processOptions(HttpServletRequest httpServletRequest) {
     URI uri = Try.of(() -> new URI(httpServletRequest.getPathInfo())).get();
-    return Optional.of(routes.findMatching(uri).stream()
+    String methods = routes.findMatching(uri).stream()
         .map(RouteMatch::getRoute)
         .map(Route::getHttpMethod)
         .map(Enum::name)
-        .collect(joining(",")))
-        .filter(s -> !s.isEmpty())
-        .map(Response::cors)
-        .orElse(new Response().notFound());
+        .collect(joining(","));
+    if (methods.isEmpty())
+      return new Response().notFound();
+    return Response.cors(methods);
   }
 
   private Response process(HttpServletRequest httpServletRequest) {
@@ -63,7 +64,11 @@ class BenderHandler extends AbstractHandler {
     URI uri = Try.of(() -> new URI(pathWithQueryString)).get();
 
     return routes.findFirstMatching(httpMethod, uri)
-        .map(RouteMatch.executeWith(httpServletRequest))
+        .map(routeMatch -> {
+          Request request = Request.of(httpServletRequest, routeMatch.getParams());
+          Function<Request, Response> target = routeMatch.getRoute().getTarget();
+          return target.apply(request);
+        })
         .orElse(new Response().notFound());
   }
 

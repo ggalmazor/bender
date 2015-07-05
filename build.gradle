@@ -1,0 +1,23 @@
+group 'net.programania'
+version '0.0.15'
+
+apply plugin: 'java'
+apply plugin: 'maven'
+
+sourceCompatibility = 1.8
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  compile 'org.eclipse.jetty:jetty-server:9.2.10.v20150310'
+  compile 'org.eclipse.jetty:jetty-servlet:9.2.10.v20150310'
+  compile 'org.eclipse.jetty:jetty-servlets:9.2.10.v20150310'
+  compile 'commons-io:commons-io:2.4'
+  compile 'com.fasterxml.jackson.core:jackson-databind:2.5.4'
+  compile 'net.sourceforge.urin:urin:2.19'
+  compile 'ch.qos.logback:logback-classic:1.1.3'
+  compile 'com.javaslang:javaslang:1.2.+'
+  testCompile 'junit:junit:4.+'
+}

@@ -1,7 +1,5 @@
 package net.programania.bender;
 
-
-import net.programania.bender.*;
 import net.sourceforge.urin.ParseException;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,6 +52,5 @@ public class RouteTest {
     assertThat("Route doesn't deserialize query param coco", match.params.containsKey("coco"), is(true));
     assertThat("Route doesn't deserialize query param coco", match.params.get("coco"), is("chuchu"));
   }
-
 
 }

@@ -3,7 +3,7 @@ package net.programania.bender;
 
 import javaslang.control.Try;
 
-enum HttpMethod {
+public enum HttpMethod {
   GET, POST, OPTIONS;
 
   static HttpMethod iValueOf(final String name) {
